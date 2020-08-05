@@ -59,6 +59,8 @@ router.get('/incomes/:id', requireToken, (req, res, next) => {
 // POST /examples
 router.post('/incomes', requireToken, (req, res, next) => {
   // set owner of new example to be current user
+  console.log('req.body:', req.body)
+  console.log('req.body.income', req.body.income)
   req.body.income.owner = req.user.id
 
   Income.create(req.body.income)
