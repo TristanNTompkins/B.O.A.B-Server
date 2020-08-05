@@ -29,7 +29,7 @@ const router = express.Router()
 
 // INDEX
 // GET /expenses
-router.get('/expense', requireToken, (req, res, next) => {
+router.get('/expenses', requireToken, (req, res, next) => {
   Expense.find()
     .then(expenses => {
       // `expenses` will be an array of Mongoose documents
@@ -59,9 +59,9 @@ router.get('/expenses/:id', requireToken, (req, res, next) => {
 // POST /expenses
 router.post('/expenses', requireToken, (req, res, next) => {
   // set owner of new expense to be current user
-  req.body.expense.owner = req.user.id
+  req.body.expenses.owner = req.user.id
 
-  Expense.create(req.body.expense)
+  Expense.create(req.body.expenses)
     // respond to succesful `create` with status 201 and JSON of new "expense"
     .then(expense => {
       res.status(201).json({ expense: expense.toObject() })
@@ -77,7 +77,7 @@ router.post('/expenses', requireToken, (req, res, next) => {
 router.patch('/expenses/:id', requireToken, removeBlanks, (req, res, next) => {
   // if the client attempts to change the `owner` property by including a new
   // owner, prevent that by deleting that key/value pair
-  delete req.body.expense.owner
+  delete req.body.expenses.owner
 
   Expense.findById(req.params.id)
     .then(handle404)
@@ -87,7 +87,7 @@ router.patch('/expenses/:id', requireToken, removeBlanks, (req, res, next) => {
       requireOwnership(req, expense)
 
       // pass the result of Mongoose's `.update` to the next `.then`
-      return expense.updateOne(req.body.expense)
+      return expense.updateOne(req.body.expenses)
     })
     // if that succeeded, return 204 and no JSON
     .then(() => res.sendStatus(204))
